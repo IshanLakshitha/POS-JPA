@@ -5,7 +5,9 @@ import lk.ijse.dep.app.business.custom.ManageCustomersBO;
 import lk.ijse.dep.app.dao.custom.CustomerDAO;
 import lk.ijse.dep.app.dao.DAOFactory;
 import lk.ijse.dep.app.dto.CustomerDTO;
+import lk.ijse.dep.app.util.JPAUtil;
 
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -18,47 +20,71 @@ public class ManageCustomersBOImpl implements ManageCustomersBO {
     }
 
     public List<CustomerDTO> getCustomers() throws SQLException {
-        return customerDAO.findAll().map(Converter::<CustomerDTO>getDTOList).get();
-
-//        return customerDAO.findAll().map(customers -> {
-//
-//            return Converter.getDTOList(customers);
-//
-////                List<CustomerDTO> dtos = new ArrayList<>();
-////                customers.forEach(c -> dtos.add(new CustomerDTO(c.getId(),c.getName(),c.getAddress())));
-//
-////                for (Customer c : customers) {
-////                    dtos.add(new CustomerDTO(c.getId(),c.getName(),c.getAddress()));
-////                }
-////                return dtos;
-//        }).get();
+        EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            customerDAO.setEntityManager(em);
+            em.getTransaction().begin();
+            List<CustomerDTO> customerDTOS = customerDAO.findAll().map(Converter::<CustomerDTO>getDTOList).get();
+            em.getTransaction().commit();
+            return customerDTOS;
+        } catch (Exception ex){
+            em.getTransaction().rollback();
+            throw ex;
+        }
     }
 
-    public boolean createCustomer(CustomerDTO dto) throws SQLException {
-        return customerDAO.save(Converter.getEntity(dto));
+    public void createCustomer(CustomerDTO dto) throws Exception {
+       EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            customerDAO.setEntityManager(em);
+            em.getTransaction().begin();
+            customerDAO.save(Converter.getEntity(dto));
+            em.getTransaction().commit();
+        }catch (Exception ex) {
+            em.getTransaction().rollback();
+            throw ex;
+        }
     }
 
-    public boolean updateCustomer(CustomerDTO dto) throws SQLException {
-        return customerDAO.update(Converter.getEntity(dto));
+    public void updateCustomer(CustomerDTO dto) throws Exception {
+       EntityManager em =  JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            customerDAO.setEntityManager(em);
+            em.getTransaction().begin();
+            customerDAO.update(Converter.getEntity(dto));
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            em.getTransaction().rollback();
+            throw ex;
+        }
     }
 
-    public boolean deleteCustomer(String customerID) throws SQLException {
-        return customerDAO.delete(customerID);
+    public void deleteCustomer(String customerID) throws SQLException {
+       EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        try{
+            customerDAO.setEntityManager(em);
+            em.getTransaction().begin();
+            customerDAO.delete(customerID);
+            em.getTransaction().commit();
+        } catch (Exception ex){
+            em.getTransaction().rollback();
+            throw ex;
+        }
     }
 
     public CustomerDTO findCustomer(String id) throws SQLException {
-//        return (CustomerDTO) customerDAO.find(id).map(Converter::getDTO).get();
+    EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
+    try{
+        customerDAO.setEntityManager(em);
+        em.getTransaction().begin();
+        CustomerDTO customerDTO = customerDAO.find(id).map(Converter::<CustomerDTO>getDTO).orElse(null);
+        em.getTransaction().commit();
+        return customerDTO;
+    } catch (Exception ex){
+        em.getTransaction().rollback();
+        throw ex;
+    }
 
-//        return customerDAO.find(id).map(new Function<Customer, CustomerDTO>() {
-//            @Override
-//            public CustomerDTO apply(Customer c) {
-//                return (CustomerDTO) Converter.getDTO(c);
-//            }
-//        }).get();
-
-//        return customerDAO.find(id).map(c -> Converter.<CustomerDTO>getDTO(c)).get();
-
-        return customerDAO.find(id).map(Converter::<CustomerDTO>getDTO).orElse(null);
     }
 
 }

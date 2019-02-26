@@ -5,10 +5,7 @@
  */
 package lk.ijse.dep.app.view.util;
 
-/**
- *
- * @author ranjith-suranga
- */
+
 public class CustomerTM {
     
     private String id;

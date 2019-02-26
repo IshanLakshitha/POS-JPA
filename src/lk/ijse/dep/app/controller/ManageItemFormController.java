@@ -32,9 +32,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author ranjith-suranga
- */
+
 public class ManageItemFormController {
 
     @FXML

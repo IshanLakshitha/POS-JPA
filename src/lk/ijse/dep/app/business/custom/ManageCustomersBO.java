@@ -10,11 +10,11 @@ public interface ManageCustomersBO extends SuperBO {
 
     List<CustomerDTO> getCustomers() throws SQLException;
 
-    boolean createCustomer(CustomerDTO dto) throws SQLException;
+    void createCustomer(CustomerDTO dto) throws Exception;
 
-    boolean updateCustomer(CustomerDTO dto) throws SQLException;
+    void updateCustomer(CustomerDTO dto) throws Exception;
 
-    boolean deleteCustomer(String customerID) throws SQLException;
+    void deleteCustomer(String customerID) throws SQLException;
 
     CustomerDTO findCustomer(String id) throws SQLException;
 

@@ -26,17 +26,16 @@ import lk.ijse.dep.app.business.custom.impl.ManageCustomersBOImpl;
 import lk.ijse.dep.app.main.AppInitializer;
 import lk.ijse.dep.app.dto.CustomerDTO;
 import lk.ijse.dep.app.view.util.CustomerTM;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- * FXML Controller class
- *
- * @author ranjith-suranga
- */
+
 public class ManageCustomerFormController{
 
     @FXML
@@ -68,7 +67,12 @@ public class ManageCustomerFormController{
         btnSave.setDisable(true);
         btnDelete.setDisable(true);
 
-        List<CustomerDTO> customersDB = manageCustomersBO.getCustomers();
+        List<CustomerDTO> customersDB = null;
+             try{
+                 customersDB = manageCustomersBO.getCustomers();
+             } catch (Exception e){
+                 Logger.getLogger("").log(Level.SEVERE, null,e);
+             }
         ObservableList<CustomerDTO> customerDTOS = FXCollections.observableArrayList(customersDB);
         ObservableList<CustomerTM> tblItems = FXCollections.observableArrayList();
         for (CustomerDTO customerDTO : customerDTOS) {
@@ -135,7 +139,14 @@ public class ManageCustomerFormController{
             CustomerTM customerTM = new CustomerTM(txtCustomerId.getText(), txtCustomerName.getText(), txtCustomerAddress.getText());
             tblCustomers.getItems().add(customerTM);
             CustomerDTO customerDTO = new CustomerDTO(txtCustomerId.getText(), txtCustomerName.getText(), txtCustomerAddress.getText());
-            boolean result = manageCustomersBO.createCustomer(customerDTO);
+            boolean result =  false;
+                    try{
+                        manageCustomersBO.createCustomer(customerDTO);
+                        result = true;
+                    } catch (Exception e) {
+                        result = false;
+                        Logger.getLogger("").log(Level.SEVERE, null, e);
+                    }
 
             if (result) {
                 new Alert(Alert.AlertType.INFORMATION, "Customer has been saved successfully", ButtonType.OK).showAndWait();
@@ -154,9 +165,17 @@ public class ManageCustomerFormController{
 
             String selectedCustomerID = tblCustomers.getSelectionModel().getSelectedItem().getId();
 
-            boolean result = manageCustomersBO.updateCustomer(new CustomerDTO(txtCustomerId.getText(),
-                    txtCustomerName.getText(),
-                    txtCustomerAddress.getText()));
+            boolean result = false;
+                    try{
+                        manageCustomersBO.updateCustomer(new CustomerDTO(txtCustomerId.getText(),
+                                txtCustomerName.getText(),
+                                txtCustomerAddress.getText()));
+                        result = true;
+                    } catch (Exception e) {
+                        result = false;
+                        Logger.getLogger("").log(Level.SEVERE, null, e);
+                    }
+
 
             if (result) {
                 new Alert(Alert.AlertType.INFORMATION, "Customer has been updated successfully", ButtonType.OK).showAndWait();
@@ -178,7 +197,14 @@ public class ManageCustomerFormController{
             String selectedCustomer = tblCustomers.getSelectionModel().getSelectedItem().getId();
 
             tblCustomers.getItems().remove(tblCustomers.getSelectionModel().getSelectedItem());
-            boolean result = manageCustomersBO.deleteCustomer(selectedCustomer);
+            boolean result = false;
+                    try{
+                        manageCustomersBO.deleteCustomer(selectedCustomer);
+                        result = true;
+                    }catch (Exception e){
+                        result = false;
+                        Logger.getLogger("").log(Level.SEVERE, null, e);
+                    }
             if (!result){
                 new Alert(Alert.AlertType.ERROR, "Failed to delete the customer", ButtonType.OK).showAndWait();
             }else{

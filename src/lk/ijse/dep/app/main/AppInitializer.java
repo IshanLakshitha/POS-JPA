@@ -16,9 +16,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
-/**
- * @author ranjith-suranga
- */
+
 public class AppInitializer extends Application {
 
     public static void navigateToHome(Node node, Stage mainStage) throws IOException {

@@ -25,11 +25,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-/**
- * FXML Controller class
- *
- * @author ranjith-suranga
- */
+
 public class MainFormController implements Initializable { 
     
     @FXML
